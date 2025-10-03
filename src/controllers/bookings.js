@@ -13,6 +13,14 @@ export const createBookings = async (req, res) => {
 
     const booking = result.rows[0];
 
+    if (kits && kits.length > 0) {
+      const insertValues = kits
+        .map((k, i) => `($1, $${i + 2})`)
+        .join(", ");
+      const query = `INSERT INTO booking_kits (booking_id, kit_id) VALUES ${insertValues}`;
+      await pool.query(query, [booking.id, ...kits.map((k) => k.id)]);
+    }
+
     // 2. Setup Nodemailer transporter
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -39,7 +47,7 @@ export const createBookings = async (req, res) => {
       subject: "✅ PalTV Booking Confirmation",
       html: `
         <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-          <h2 style="color: #1976d2;">Your Booking is Confirmed 🎉</h2>
+          <h2 style="color: #1976d2;">Your Booking is Confirmed</h2>
           <p>Hi,</p>
           <p>Your kit booking has been confirmed.</p>
 
@@ -52,7 +60,7 @@ export const createBookings = async (req, res) => {
 
           <hr/>
           <p>Make sure you scan the QR code in the kit room when you return the kit.</p>
-          <p style="font-size: 0.9em; color: #777;">If you no longer need this booking or want to change the booking, let the Head of Engineering know you no longer need this one.</p>
+          <p style="font-size: 0.9em; color: #777;">If you no longer need this booking, let the Head of Engineering know via Slack.</p>
         </div>
       `,
     };
