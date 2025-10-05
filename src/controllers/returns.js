@@ -27,9 +27,9 @@ export const findUserBookings = async (req, res) => {
 
     // 3. Get kits for that booking
     const kitsRes = await pool.query(
-      `SELECT k.id, k.name, k.type
+      `SELECT k.id, k.name, k.type, bk.quantity
        FROM booking_kits bk
-       JOIN kit k ON bk.kit_id = k.id
+       JOIN kit k ON bk.kit_id = k.id -- CORRECTED: kits -> kit
        WHERE bk.booking_id = $1`,
       [booking.id]
     );
@@ -50,9 +50,9 @@ export const getBookingKits = async (req, res) => {
     const { bookingId } = req.params;
 
     const result = await pool.query(
-      `SELECT k.id, k.name, k.type
+      `SELECT k.id, k.name, k.type, bk.quantity
        FROM booking_kits bk
-       JOIN kits k ON bk.kit_id = k.id
+       JOIN kit k ON bk.kit_id = k.id -- CORRECTED: kits -> kit
        WHERE bk.booking_id = $1`,
       [bookingId]
     );
@@ -64,7 +64,7 @@ export const getBookingKits = async (req, res) => {
   }
 };
 
-// 3. Confirm return of kits
+// 3. Confirm return of kits (NO CHANGES NEEDED HERE)
 export const confirmReturn = async (req, res) => {
   const client = await pool.connect();
   try {
