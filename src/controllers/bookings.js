@@ -1,11 +1,12 @@
 import nodemailer from "nodemailer";
 import pool from "../config/db.js";
 
+
 export const createBookings = async (req, res) => {
   try {
-    const { user_id, start_time, end_time, email, kits } = req.body;
+    const { user_id, start_time, end_time, email, kitQuantities: kits } = req.body;
 
-    // 1. Insert booking into DB
+    // 2. Insert booking into DB (this part is unchanged)
     const result = await pool.query(
       "INSERT INTO bookings (user_id, start_time, end_time) VALUES ($1, $2, $3) RETURNING *",
       [user_id, start_time, end_time]
@@ -13,13 +14,21 @@ export const createBookings = async (req, res) => {
 
     const booking = result.rows[0];
 
+    // 3. Insert kits with quantity into booking_kits table
     if (kits && kits.length > 0) {
-      const insertValues = kits
-        .map((k, i) => `($1, $${i + 2})`)
-        .join(", ");
-      const query = `INSERT INTO booking_kits (booking_id, kit_id) VALUES ${insertValues}`;
-      await pool.query(query, [booking.id, ...kits.map((k) => k.id)]);
+      // Use the 'kits' array (which is kitQuantities) as the source of truth
+      await Promise.all(
+        kits.map((k) =>
+          // Update the SQL query to include the 'quantity' column
+          pool.query(
+            "INSERT INTO booking_kits (booking_id, kit_id, quantity) VALUES ($1, $2, $3)",
+            // Provide the quantity as the third parameter
+            [booking.id, k.id, k.quantity]
+          )
+        )
+      );
     }
+
 
     // 2. Setup Nodemailer transporter
     const transporter = nodemailer.createTransport({
@@ -30,17 +39,26 @@ export const createBookings = async (req, res) => {
       },
     });
 
-    // Build HTML kit list
+    // Build HTML kit list using kitQuantities for email
+    // Build HTML kit list for email (name + quantity only)
     const kitList = kits?.length
-      ? `<ul>${kits.map((k) => `<li>${k.name} (${k.type})</li>`).join("")}</ul>`
+      ? `<ul>${kits
+          .map(
+            (k) => `<li>${k.name}${k.quantity > 1 ? ` (x${k.quantity})` : ""}</li>`
+          )
+          .join("")}</ul>`
       : "<p><i>No kits selected</i></p>";
 
-    // Format date/time
-    const bookingDate = start_time.split(" ")[0];
-    const bookingStart = start_time.split(" ")[1];
-    const bookingEnd = end_time.split(" ")[1];
 
-    // 3. Email options with HTML
+    // Format date/time
+    const datePart = start_time.split(" ")[0]; // Extracts "YYYY-MM-DD"
+    const [year, month, day] = datePart.split("-");
+    const bookingDate = `${day}/${month}/${year}`; // Creates "DD/MM/YYYY"
+
+    const bookingStart = start_time.split(" ")[1].substring(0, 5); // Extracts "HH:mm"
+    const bookingEnd = end_time.split(" ")[1].substring(0, 5);     // Extracts "HH:mm"
+
+    // 3. Email options
     const mailOptions = {
       from: `"PalTV Kit Bookings" <${process.env.EMAIL_USER}>`,
       to: email,
@@ -70,12 +88,12 @@ export const createBookings = async (req, res) => {
 
     // 5. Respond with booking
     res.status(201).json({ success: true, booking });
-
   } catch (err) {
     console.error("Booking creation error:", err);
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 
 // GET all Bookings
