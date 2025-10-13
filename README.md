@@ -14,6 +14,11 @@ Running API locally(assuming you have git installed)
     docker-compose up -d
     npm run db:setup
 
-To verify your docker containers are running can run command "docker ps" if in linux may need to run "sudo docker ps" .
+ - Create a .env file and ensure this is added to your .gitignore file. Add the following variables to your .env
+    EMAIL_USER=<>
+    EMAIL_PASS=<>
+ - I will inform you of the credentials to put in the placeholders
+
+To verify your docker containers are running can run command "docker ps" if in linux may need to run "sudo docker ps".
 
 Can shutdown containters in Docker Desktop GUI.
