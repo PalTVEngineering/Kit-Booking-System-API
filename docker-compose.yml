@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # The API service, built from the local code
+  api:
+    build: .
+    container_name: local_booking_api
+    ports:
+      # Exposes the API on port 5000 of the developer's machine
+      - "5000:5000"
+    environment:
+      # Environment variables to connect to the local database below
+      DB_HOST: db_local
+      DB_USER: localuser
+      DB_PASS: localpassword
+      DB_NAME: booking_local_db
+      DB_PORT: 5432
+      # Add any other required env variables for your API here
+    volumes:
+      # This is the key for local development!
+      # It syncs the local code into the container for live reloading.
+      - .:/app
+    depends_on:
+      - db_local
+
+  # A dedicated PostgreSQL container for local development
+  db_local:
+    image: postgres:15-alpine
+    container_name: local_booking_db
+    environment:
+      POSTGRES_USER: localuser
+      POSTGRES_PASSWORD: localpassword
+      POSTGRES_DB: booking_local_db
+    volumes:
+      # Persists database data on the developer's machine between restarts
+      - local_postgres_data:/var/lib/postgresql/data
+    ports:
+      # Exposes the DB on port 5432 for easy access with a GUI client
+      - "5432:5432"
+
+volumes:
+  local_postgres_data:
