@@ -1,0 +1,30 @@
+#DO NOT CHANGE!!!
+name: Deploy API to Production
+
+# This workflow runs on any push to the 'main' branch
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    # This job MUST run on your self-hosted runner
+    runs-on: self-hosted
+
+    steps:
+      - name: 'Pull Latest Code & Rebuild API Container'
+        run: |
+          echo "Starting API deployment..."
+          # Go into the API's specific source code directory on the VM
+          cd /opt/booking_system/api
+          
+          # Pull the latest changes from the main branch
+          git pull
+          
+          # Go back to the main project directory to access the docker-compose file
+          cd /opt/booking_system
+          
+          # Rebuild and restart ONLY the api service, ensuring others are not affected
+          docker-compose up -d --build api
+          
+          echo "API deployment successful!"
