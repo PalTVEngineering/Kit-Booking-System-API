@@ -62,7 +62,7 @@ export const createBookings = async (req, res) => {
     const name_query = await pool.query(
       "SELECT first_name, last_name FROM users WHERE id = $1",
       [user_id]
-    )
+    );
     const name_rows = await name_query.rows;
     const first_name = name_rows[0].first_name;
     const last_name = name_rows[0].last_name;
