@@ -67,7 +67,6 @@ export const createBookings = async (req, res) => {
     const first_name = name_rows[0].first_name;
     const last_name = name_rows[0].last_name;
     const full_name = first_name + " " + last_name;
-    console.log(full_name);
 
     // 3. Email options
     const mailOptions = {
