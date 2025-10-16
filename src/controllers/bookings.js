@@ -12,7 +12,7 @@ export const createBookings = async (req, res) => {
       [user_id, start_time, end_time]
     );
 
-    const booking = result.rows[0];
+        const booking = result.rows[0];
 
     // 3. Insert kits with quantity into booking_kits table
     if (kits && kits.length > 0) {
@@ -57,6 +57,17 @@ export const createBookings = async (req, res) => {
 
     const bookingStart = start_time.split(" ")[1].substring(0, 5); // Extracts "HH:mm"
     const bookingEnd = end_time.split(" ")[1].substring(0, 5);     // Extracts "HH:mm"
+    
+    // Get name of user from user id
+    const name_query = await pool.query(
+      "SELECT first_name, last_name FROM users WHERE id = $1",
+      [user_id]
+    )
+    const name_rows = await name_query.rows;
+    const first_name = name_rows[0].first_name;
+    const last_name = name_rows[0].last_name;
+    const full_name = first_name + " " + last_name;
+    console.log(full_name);
 
     // 3. Email options
     const mailOptions = {
@@ -67,7 +78,7 @@ export const createBookings = async (req, res) => {
       html: `
         <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
           <h2 style="color: #1976d2;">Your Booking is Confirmed</h2>
-          <p>Hi,</p>
+          <p>Hi ${full_name},</p>
           <p>Your kit booking has been confirmed.</p>
 
           <h3>📅 Booking Details:</h3>
