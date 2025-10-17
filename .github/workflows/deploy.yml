@@ -25,6 +25,6 @@ jobs:
           cd /opt/booking_system
           
           # Rebuild and restart ONLY the api service, ensuring others are not affected
-          docker-compose up -d --build api
+          docker compose up -d --build api
           
           echo "API deployment successful!"
