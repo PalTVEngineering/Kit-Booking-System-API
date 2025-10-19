@@ -9,6 +9,7 @@
 
 -- Started on 2025-10-08 15:28:31
 
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -47,14 +48,13 @@ ALTER TABLE public.booking_kits OWNER TO postgres;
 CREATE TABLE public.bookings (
     id integer NOT NULL,
     user_id integer NOT NULL,
+    project_title character varying(100),
     start_time timestamp without time zone NOT NULL,
     end_time timestamp without time zone,
     status character varying(20) DEFAULT 'active'::character varying
 );
 
-
 ALTER TABLE public.bookings OWNER TO postgres;
-
 --
 -- TOC entry 221 (class 1259 OID 17328)
 -- Name: bookings_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
