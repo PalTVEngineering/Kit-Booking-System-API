@@ -20,7 +20,8 @@ services:
     volumes:
       # This is the key for local development!
       # It syncs the local code into the container for live reloading.
-      - .:/app
+      - .:/app:cached
+      - /app/node_modules
     depends_on:
       - db_local
 
