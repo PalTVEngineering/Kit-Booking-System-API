@@ -28,3 +28,35 @@ jobs:
           docker compose up -d --build api
           
           echo "API deployment successful!"
+
+      - name: 'Apply New SQL Migrations'
+        run: |
+          echo "Checking for new database migrations..."
+          
+          for f in migrations/*.sql; do
+            # Extract just the filename (e.g., "001_add_status_to_kits.sql") from the full path
+            filename=$(basename "$f")
+            
+            # Check if this filename already exists in our tracking table.
+            # The psql command will return '1' if the record exists, and '0' if it does not.
+            APPLIED_COUNT=$(docker exec -i booking_system_db psql -U postgres -d "PalTV Kit Booking System" -t -c "SELECT COUNT(*) FROM schema_migrations WHERE filename = '$filename';")
+            
+            # The output from psql has whitespace, so we trim it.
+            APPLIED_COUNT=$(echo $APPLIED_COUNT | xargs)
+
+            if [ "$APPLIED_COUNT" -eq "0" ]; then
+              # If the count is 0, the script has NOT been applied yet.
+              echo "Applying new migration: $filename"
+              
+              # 1. Apply the migration by piping the SQL file into psql
+              cat "$f" | docker exec -i booking_system_db psql -U postgres -d "PalTV Kit Booking System"
+              
+              # 2. Record this script's filename in our tracking table so it doesn't run again
+              docker exec -i booking_system_db psql -U postgres -d "PalTV Kit Booking System" -c "INSERT INTO schema_migrations (filename) VALUES ('$filename');"
+            else
+              # If the count is 1, we've seen this script before.
+              echo "Skipping already applied migration: $filename"
+            fi
+          done
+          
+          echo "Database is up to date."
