@@ -48,12 +48,11 @@ ALTER TABLE public.booking_kits OWNER TO postgres;
 CREATE TABLE public.bookings (
     id integer NOT NULL,
     user_id integer NOT NULL,
-    project_title character varying(100),
     start_time timestamp without time zone NOT NULL,
     end_time timestamp without time zone,
     status character varying(20) DEFAULT 'active'::character varying
 );
-
+ALTER TABLE public.bookings ADD project_title character varying(100);
 ALTER TABLE public.bookings OWNER TO postgres;
 --
 -- TOC entry 221 (class 1259 OID 17328)
