@@ -32,7 +32,8 @@ jobs:
       - name: 'Apply New SQL Migrations'
         run: |
           echo "Checking for new database migrations..."
-          
+          cd /opt/booking_system/api
+
           for f in migrations/*.sql; do
             # Extract just the filename (e.g., "001_add_status_to_kits.sql") from the full path
             filename=$(basename "$f")
