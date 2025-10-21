@@ -25,4 +25,4 @@ Can shutdown containters in Docker Desktop GUI.
 
 # Updating DB Schema
 
-To make a change to the production DB create a new sql file in a similar naming format to the current one and write your SQL code there, the runner will take care of the rest
+To make a change to the production DB create a new sql file in the migrations folder in a similar naming format to the current one and write your SQL code there, the runner will take care of the rest
