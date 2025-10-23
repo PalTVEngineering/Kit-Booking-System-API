@@ -72,7 +72,7 @@ export const createBookings = async (req, res) => {
     const mailOptions = {
       from: `"PalTV Kit Bookings" <${process.env.EMAIL_USER}>`,
       to: email,
-      cc: "cinematography@palatinate.org.uk",
+      //cc: "cinematography@palatinate.org.uk",
       subject: "✅ PalTV Booking Confirmation",
       html: `
         <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
