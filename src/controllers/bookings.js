@@ -4,12 +4,12 @@ import pool from "../config/db.js";
 
 export const createBookings = async (req, res) => {
   try {
-    const { user_id, start_time, end_time, email, kitQuantities: kits } = req.body;
+    const { user_id, project_title, start_time, end_time, email, kitQuantities: kits } = req.body;
 
     // 2. Insert booking into DB (this part is unchanged)
     const result = await pool.query(
-      "INSERT INTO bookings (user_id, start_time, end_time) VALUES ($1, $2, $3) RETURNING *",
-      [user_id, start_time, end_time]
+      "INSERT INTO bookings (user_id, project_title, start_time, end_time) VALUES ($1, $2, $3, $4) RETURNING *",
+      [user_id, project_title, start_time, end_time]
     );
 
         const booking = result.rows[0];
@@ -94,7 +94,8 @@ export const createBookings = async (req, res) => {
       `,
     };
 
-    // 4. Send email
+    // 4. Send email 
+    // comment this out when testing 
     await transporter.sendMail(mailOptions);
 
     // 5. Respond with booking

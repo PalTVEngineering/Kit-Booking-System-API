@@ -1,0 +1,1 @@
+ALTER TABLE public.bookings ADD project_title character varying(100);
