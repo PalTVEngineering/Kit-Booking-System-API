@@ -127,7 +127,9 @@ CREATE TABLE public.users (
     id integer NOT NULL,
     first_name character varying(100) NOT NULL,
     last_name character varying(100),
-    email character varying(100)
+    email character varying(100),
+    user_type INTEGER DEFAULT 0,           -- 0 = normal user, 1 = admin
+    password VARCHAR(255) -- default password for new users
 );
 
 
