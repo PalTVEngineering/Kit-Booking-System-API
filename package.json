@@ -6,15 +6,18 @@
   "type": "module",
   "scripts": {
     "test": "jest",
+    "dev": "nodemon server.js",
     "db:setup": "docker-compose exec -T db_local psql -U localuser -d booking_local_db < schema.sql"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "nodemailer": "^7.0.6",
     "pg": "^8.16.3"
   },
