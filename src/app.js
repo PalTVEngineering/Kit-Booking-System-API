@@ -13,7 +13,7 @@ app.use(express.json());
 app.use("/api/user", userRoutes);
 app.use("/api/kit", kitRoutes);
 app.use("/api/bookings", bookingRoutes);
-app.use("/api/returns", returnsRoutes)
-app.use("/api/admin", adminRoutes)
+app.use("/api/returns", returnsRoutes);
+app.use("/api/admin", adminRoutes);
 
 export default app;
