@@ -25,6 +25,47 @@ SET row_security = off;
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
+-- Clean up existing tables before re-creating (safe for dev use only)
+DROP TABLE IF EXISTS public.booking_kits CASCADE;
+DROP TABLE IF EXISTS public.bookings CASCADE;
+DROP TABLE IF EXISTS public.kit CASCADE;
+DROP TABLE IF EXISTS public.users CASCADE;
+DROP TABLE IF EXISTS public.admins CASCADE;
+
+-- Drop related sequences
+DROP SEQUENCE IF EXISTS public.bookings_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS public.kit_id_seq CASCADE;
+DROP SEQUENCE IF EXISTS public.users_id_seq CASCADE;
+--
+-- TOC entry 224 (class 1259)
+-- Name: admins; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.admins (
+    id SERIAL PRIMARY KEY,                               -- Unique admin ID (auto-increment)
+    username VARCHAR(100) UNIQUE NOT NULL,               -- Admin login username (must be unique)
+    password VARCHAR(255) NOT NULL,                      -- Login password (plain or hashed)
+    role VARCHAR(50) DEFAULT 'admin',                    -- Role type (e.g. admin, superadmin)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP       -- Account creation timestamp
+);
+
+ALTER TABLE public.admins OWNER TO postgres;
+
+
+--
+-- TOC entry 218 (class 1259 OID 17291)
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.users (
+    id integer NOT NULL,
+    first_name character varying(100) NOT NULL,
+    last_name character varying(100),
+    email character varying(100)
+);
+
+
+ALTER TABLE public.users OWNER TO postgres;
 
 --
 -- TOC entry 223 (class 1259 OID 17346)
@@ -116,24 +157,6 @@ ALTER SEQUENCE public.kit_id_seq OWNER TO postgres;
 --
 
 ALTER SEQUENCE public.kit_id_seq OWNED BY public.kit.id;
-
-
---
--- TOC entry 218 (class 1259 OID 17291)
--- Name: users; Type: TABLE; Schema: public; Owner: postgres
---
-
-CREATE TABLE public.users (
-    id integer NOT NULL,
-    first_name character varying(100) NOT NULL,
-    last_name character varying(100),
-    email character varying(100),
-    user_type INTEGER DEFAULT 0,           -- 0 = normal user, 1 = admin
-    password VARCHAR(255) -- default password for new users
-);
-
-
-ALTER TABLE public.users OWNER TO postgres;
 
 --
 -- TOC entry 217 (class 1259 OID 17290)

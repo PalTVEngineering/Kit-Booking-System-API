@@ -1,11 +1,10 @@
 import pool from "../config/db.js";
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 export const adminLogin = async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        const result = await pool.query("SELECT * FROM users WHERE first_name = $1", [username]);
+        const result = await pool.query("SELECT * FROM admins WHERE username = $1", [username]);
         if (result.rows.length === 0) {
             return res.status(401).json({ error: "Invalid username or password." });
         }
