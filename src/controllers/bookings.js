@@ -118,3 +118,42 @@ export const getBookings = async (req, res) => {
         res.status(500).json({ error: "Server error" });
     }
 };
+
+// Delete booking and user
+export const deleteBooking = async (req,res)=>{
+  const client = await pool.connect();
+  try {
+    const { bookingId } = req.body;
+
+    await client.query("BEGIN");
+
+    // 1. Delete kits linked to booking
+    await client.query("DELETE FROM booking_kits WHERE booking_id = $1", [bookingId]);
+
+    // 2. Get booking so we know which user to delete
+    const bookingRes = await client.query(
+      "SELECT user_id FROM bookings WHERE id = $1",
+      [bookingId]
+    );
+    if (bookingRes.rows.length === 0) {
+      throw new Error("Booking not found");
+    }
+    const userId = bookingRes.rows[0].user_id;
+
+    // 3. Delete booking
+    await client.query("DELETE FROM bookings WHERE id = $1", [bookingId]);
+
+    // 4. Delete user
+    await client.query("DELETE FROM users WHERE id = $1", [userId]);
+
+    await client.query("COMMIT");
+
+    res.json({ success: true, message: "Booking and user deleted." });
+  } catch (err) {
+    await client.query("ROLLBACK");
+    console.error("Delete booking error:", err);
+    res.status(500).json({ error: "Server error" });
+  } finally {
+    client.release();
+  }
+}
