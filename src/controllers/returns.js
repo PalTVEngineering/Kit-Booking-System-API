@@ -26,8 +26,8 @@ export const findUserBookings = async (req, res) => {
 
     //get all bookings with user_id in user_arr
     const bookingRes = await pool.query(
-      "SELECT * FROM bookings WHERE user_id = ANY($1) ORDER BY start_time DESC",
-      [user_arr]
+      "SELECT * FROM bookings WHERE user_id = ANY($1) AND status = $2 ORDER BY start_time DESC",
+      [user_arr, "active"]
     );
     if (bookingRes.rows.length === 0) {
       return res.status(404).json({ error: "No bookings found for this user" });
@@ -72,39 +72,16 @@ export const getBookingAndKits = async (req, res) => {
 
 // 3. Confirm return of kits (NO CHANGES NEEDED HERE)
 export const confirmReturn = async (req, res) => {
-  const client = await pool.connect();
   try {
     const { bookingId } = req.body;
 
-    await client.query("BEGIN");
+    // Set status to closed(good)
+    //TODO: Set status to closed(missing) if a comment is submitted once comment form is complete.
+    await pool.query("UPDATE bookings SET status = $1 WHERE id = $2", ["closed(good)",bookingId]);
 
-    // 1. Delete kits linked to booking
-    await client.query("DELETE FROM booking_kits WHERE booking_id = $1", [bookingId]);
 
-    // 2. Get booking so we know which user to delete
-    const bookingRes = await client.query(
-      "SELECT user_id FROM bookings WHERE id = $1",
-      [bookingId]
-    );
-    if (bookingRes.rows.length === 0) {
-      throw new Error("Booking not found");
-    }
-    const userId = bookingRes.rows[0].user_id;
-
-    // 3. Delete booking
-    await client.query("DELETE FROM bookings WHERE id = $1", [bookingId]);
-
-    // 4. Delete user
-    await client.query("DELETE FROM users WHERE id = $1", [userId]);
-
-    await client.query("COMMIT");
-
-    res.json({ success: true, message: "Return confirmed, booking and user deleted." });
+    res.json({ success: true, message: "Return confirmed" });
   } catch (err) {
-    await client.query("ROLLBACK");
-    console.error("Confirm return error:", err);
     res.status(500).json({ error: "Server error" });
-  } finally {
-    client.release();
   }
 };
