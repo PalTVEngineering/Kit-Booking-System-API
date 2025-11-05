@@ -26,3 +26,16 @@ Can shutdown containters in Docker Desktop GUI.
 # Updating DB Schema
 
 To make a change to the production DB create a new sql file in the migrations folder in a similar naming format to the current one and write your SQL code there, the runner will take care of the rest
+
+# Testing
+To configure your testing environment run the following commands in the CLI while in the API folder
+
+-npm install --save-dev jest
+-npm audit fix
+-npm install --save-dev supertest
+-npm install --save-dev babel-jest
+-npm install @babel/preset-env --save-dev
+
+# Writing new tests
+Unit tests should be similar to the format of what is already there, we should be writing new/updating unit tests whenever we create or augment
+the function of a section of the code.
