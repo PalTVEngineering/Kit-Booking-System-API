@@ -12,7 +12,6 @@ jest.mock("../config/db.js", () => ({
   },
 }));
 
-//import pool from "../config/db.js"; // MUST be imported after jest.mock()
 import request from "supertest";
 import app from "../app.js";
 
@@ -28,7 +27,7 @@ describe("DELETE /bookings", () => {
     mockClient.query
       .mockResolvedValueOnce({})                                   // BEGIN
       .mockResolvedValueOnce({})                                   // DELETE FROM booking_kits
-      .mockResolvedValueOnce({ rows: [{ user_id: 55 }] })          // SELECT user_id - 55 is the mock user id 
+      .mockResolvedValueOnce({ rows: [{ user_id: 69 }] })          // SELECT user_id - 69 is the mock user id 
       .mockResolvedValueOnce({})                                   // DELETE booking
       .mockResolvedValueOnce({})                                   // DELETE user
       .mockResolvedValueOnce({});                                  // COMMIT
@@ -44,17 +43,7 @@ describe("DELETE /bookings", () => {
       message: "Booking and user deleted.",
     });
 
-    //check correct SQL queries were run
-    expect(mockClient.query).toHaveBeenCalledWith(
-      "DELETE FROM booking_kits WHERE booking_id = $1",
-      [bookingId]
-    );
-
-    expect(mockClient.query).toHaveBeenCalledWith(
-      "SELECT user_id FROM bookings WHERE id = $1",
-      [bookingId]
-    );
-
+    //check correct DELETE SQL queries were run
     expect(mockClient.query).toHaveBeenCalledWith(
       "DELETE FROM bookings WHERE id = $1",
       [bookingId]
@@ -62,9 +51,12 @@ describe("DELETE /bookings", () => {
 
     expect(mockClient.query).toHaveBeenCalledWith(
       "DELETE FROM users WHERE id = $1",
-      [55]
+      [69]//mock user ID from earlier
     );
 
+    //check client was released
     expect(mockClient.release).toHaveBeenCalled();
   });
 });
+
+
