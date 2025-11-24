@@ -28,7 +28,7 @@ describe("POST /api/confirm-return", () => {
     const response = await request(app).post('/api/returns/confirm-return')
     .send({ bookingId: bookingId });
     expect(response.status).toBe(200);
-
+    //check correct UPDATE SQL query was run
     expect(pool.query).toHaveBeenCalledWith(
       "UPDATE bookings SET status = $1 WHERE id = $2", ["closed(good)",bookingId]
     );
