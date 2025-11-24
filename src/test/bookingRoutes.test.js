@@ -1,4 +1,3 @@
-
 const mockClient = {
   query: jest.fn(),
   release: jest.fn(),
@@ -8,8 +7,8 @@ const mockClient = {
 jest.mock("../config/db.js", () => ({
   __esModule: true,
   default: {
-    connect: jest.fn(() => mockClient),   // pool.connect()
-    query: jest.fn(),                     // optional — only if pool.query() is used
+    connect: jest.fn(() => mockClient),   
+    query: jest.fn(),                     
   },
 }));
 
@@ -29,22 +28,23 @@ describe("DELETE /bookings", () => {
     mockClient.query
       .mockResolvedValueOnce({})                                   // BEGIN
       .mockResolvedValueOnce({})                                   // DELETE FROM booking_kits
-      .mockResolvedValueOnce({ rows: [{ user_id: 55 }] })          // SELECT user_id
+      .mockResolvedValueOnce({ rows: [{ user_id: 55 }] })          // SELECT user_id - 55 is the mock user id 
       .mockResolvedValueOnce({})                                   // DELETE booking
       .mockResolvedValueOnce({})                                   // DELETE user
       .mockResolvedValueOnce({});                                  // COMMIT
 
     //check response
-    const res = await request(app)
+    const response = await request(app)
       .delete("/api/bookings/delete")
       .send({ bookingId })
       .expect(200);
 
-    expect(res.body).toEqual({
+    expect(response.body).toEqual({
       success: true,
       message: "Booking and user deleted.",
     });
-    /*
+
+    //check correct SQL queries were run
     expect(mockClient.query).toHaveBeenCalledWith(
       "DELETE FROM booking_kits WHERE booking_id = $1",
       [bookingId]
@@ -65,6 +65,6 @@ describe("DELETE /bookings", () => {
       [55]
     );
 
-    expect(mockClient.release).toHaveBeenCalled();*/
+    expect(mockClient.release).toHaveBeenCalled();
   });
 });
