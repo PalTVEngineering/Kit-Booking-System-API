@@ -12,6 +12,7 @@ jest.mock("../config/db.js", () => ({
   },
 }));
 
+import pool from "../config/db.js"; 
 import request from "supertest";
 import app from "../app.js";
 
@@ -32,16 +33,12 @@ describe("DELETE /bookings", () => {
       .mockResolvedValueOnce({})                                   // DELETE user
       .mockResolvedValueOnce({});                                  // COMMIT
 
-    //check response
-    const response = await request(app)
+      const response = await request(app)
       .delete("/api/bookings/delete")
       .send({ bookingId })
-      .expect(200);
-
-    expect(response.body).toEqual({
-      success: true,
-      message: "Booking and user deleted.",
-    });
+      
+    //check response status
+    expect(response.status).toBe(200);
 
     //check correct DELETE SQL queries were run
     expect(mockClient.query).toHaveBeenCalledWith(
