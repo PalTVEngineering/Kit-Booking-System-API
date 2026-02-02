@@ -21,14 +21,17 @@ beforeEach(() => {
   jest.clearAllMocks();
 });
 
-describe('GET /api/kit/', () => {
-  it('should return a list of kits', async () => {
-    pool.query.mockResolvedValueOnce({
-      //mock data - we pretend that this is what the database returned rather than executing the SQL call
-        rows:[{"id": 1,"name": "Sony FX30","type": "Camera"}] 
-    });
-    const response = await request(app).get('/api/kit/');
+describe("POST /api/confirm-return", () => {
+  it("should confirm return of booking", async () => {
+    let bookingId = 1;
+    pool.query.mockResolvedValueOnce({});
+    const response = await request(app).post('/api/returns/confirm-return')
+    .send({ bookingId: bookingId });
     expect(response.status).toBe(200);
-    expect(response.body).toBeInstanceOf(Array);
+    //check correct UPDATE SQL query was run
+    expect(pool.query).toHaveBeenCalledWith(
+      "UPDATE bookings SET status = $1 WHERE id = $2", ["closed(good)",bookingId]
+    );
   });
 });
+    
