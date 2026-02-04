@@ -39,10 +39,12 @@ export const getAllBookingsWithKits = async (req, res) => {
         u.first_name,
         u.last_name,
         b.project_title,
+        b.status,
         b.start_time,
         b.end_time,
         k.id AS kit_id,
         k.name AS kit_name,
+        k.type AS kit_type,
         bk.quantity
       FROM bookings b
       JOIN users u ON b.user_id = u.id
@@ -62,6 +64,7 @@ export const getAllBookingsWithKits = async (req, res) => {
                     id: `BKG-${row.booking_id.toString().padStart(4, "0")}`,
                     name: `${row.first_name} ${row.last_name || ""}`.trim(),
                     projectName: row.project_title,
+                    status: row.status,
                     startTime: row.start_time,
                     endTime: row.end_time,
                     kits: [],
@@ -72,6 +75,7 @@ export const getAllBookingsWithKits = async (req, res) => {
                 bookingsMap[row.booking_id].kits.push({
                     id: `KIT-${row.kit_id}`,
                     name: row.kit_name,
+                    type: row.kit_type,
                     qty: row.quantity || 1,
                 });
             }
