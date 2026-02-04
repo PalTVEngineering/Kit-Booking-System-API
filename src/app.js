@@ -8,8 +8,20 @@ import adminRoutes from "./routes/admin.js";
 import cookieParser from "cookie-parser";
 const app = express();
 
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://kit-booking.paltv.uk" // i think this is the correct URL, but you should verify it
+];
+
 app.use(cors({
-  origin: "http://localhost:5173", // IMPORTANT: need to add production IP or URL so it works in production (wildcards dont work with credentials)
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
 
