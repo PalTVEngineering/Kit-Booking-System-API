@@ -34,7 +34,7 @@ describe("DELETE /bookings", () => {
       .mockResolvedValueOnce({});                                  // COMMIT
 
       const response = await request(app)
-      .delete("/api/bookings/delete")
+      .delete("/api/admin/booking/delete")
       .send({ bookingId })
       
     //check response status
