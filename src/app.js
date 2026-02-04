@@ -8,7 +8,7 @@ import adminRoutes from "./routes/admin.js";
 import cookieParser from "cookie-parser";
 const app = express();
 
-
+// allowed URLs for CORS
 const allowedOrigins = [
   "http://localhost:5173",
   "https://kit-booking.paltv.uk" // i think this is the correct URL, but you should verify it
