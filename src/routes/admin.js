@@ -1,10 +1,10 @@
 import express from "express";
 import { adminLogin, getAllBookingsWithKits } from "../controllers/admin.js";
-
+import authenticate from "../auth/auth.js";
 const router = express.Router();
 
 // POST /api/admin/login
 router.post("/login", adminLogin);
-router.get("/bookings", getAllBookingsWithKits);
+router.get("/bookings", authenticate, getAllBookingsWithKits);
 
 export default router;

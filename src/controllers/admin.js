@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 export const adminLogin = async (req, res) => {
     try {
         const { username, password } = req.body;
-
         const result = await pool.query("SELECT * FROM admins WHERE username = $1", [username]);
         if (result.rows.length === 0) {
             return res.status(401).json({ error: "Invalid username or password." });
@@ -21,11 +20,11 @@ export const adminLogin = async (req, res) => {
             { expiresIn: "2h" }
         );
 
-        res.status(200).json({
+        res.cookie("adminToken", token, { httpOnly: true, secure: true, sameSite: 'Strict' }).status(200).json({
             success: true,
             message: "Login successful",
-            token,
-        });
+        })
+        ;
     } catch (err) {
         console.error("Admin login error:", err);
         res.status(500).json({ error: "Server error" });
