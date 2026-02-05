@@ -338,7 +338,6 @@ ALTER TABLE ONLY public.bookings
 --
 -- PostgreSQL database dump complete
 --
-
 CREATE TABLE public.admins (
     id SERIAL PRIMARY KEY,                               -- Unique admin ID (auto-increment)
     username VARCHAR(100) UNIQUE NOT NULL,               -- Admin login username (must be unique)
@@ -350,7 +349,7 @@ CREATE TABLE public.admins (
 ALTER TABLE public.admins OWNER TO postgres;
 
 COPY public.admins (id, username, password) FROM stdin;
-1	shawncui	123456
+1	shawncui	8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92
 \.
 
 \unrestrict zO1PGfCMmNsYdaxKgFmEDFwUKsofZikUlOwYpoJLgTw3tOQcxJNka1xiWdBYcwB

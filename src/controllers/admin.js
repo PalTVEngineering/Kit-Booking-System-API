@@ -1,18 +1,19 @@
 import pool from "../config/db.js";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 export const adminLogin = async (req, res) => {
     try {
         const { username, password } = req.body;
-        const result = await pool.query("SELECT * FROM admins WHERE username = $1", [username]);
+        const hashedPassword = crypto.createHash("sha256").update(password).digest("hex");
+        const result = await pool.query("SELECT * FROM admins WHERE username = $1 AND password = $2", [username, hashedPassword]);
         if (result.rows.length === 0) {
             return res.status(401).json({ error: "Invalid username or password." });
         }
-
         const admin = result.rows[0];
 
-        if (admin.password !== password) {
-            return res.status(401).json({ error: "Invalid username or password." });
-        }
+        // if (admin.password !== password) {
+        //     return res.status(401).json({ error: "Invalid username or password." });
+        // }
 
         const token = jwt.sign(
             { id: admin.id, username: admin.username },
@@ -57,6 +58,7 @@ export const getAllBookingsWithKits = async (req, res) => {
 
         // Transform flat rows into nested array
         const bookingsMap = {};
+        console.log(crypto.createHash("sha256").update("123456").digest("hex"))
 
         rows.forEach((row) => {
             if (!bookingsMap[row.booking_id]) {
