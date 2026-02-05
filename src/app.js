@@ -11,11 +11,13 @@ const app = express();
 // allowed URLs for CORS
 const allowedOrigins = [
   "http://localhost:5173",
+  "http://localhost:5000",
   "https://kit-booking.paltv.uk" // i think this is the correct URL, but you should verify it
 ];
 
 app.use(cors({
   origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // allow requests with no origin (needed for jest to work)
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
