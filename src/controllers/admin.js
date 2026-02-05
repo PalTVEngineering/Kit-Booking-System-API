@@ -54,7 +54,6 @@ export const getAllBookingsWithKits = async (req, res) => {
 
         // Transform flat rows into nested array
         const bookingsMap = {};
-        console.log(crypto.createHash("sha256").update("123456").digest("hex"))
 
         rows.forEach((row) => {
             if (!bookingsMap[row.booking_id]) {
