@@ -339,5 +339,19 @@ ALTER TABLE ONLY public.bookings
 -- PostgreSQL database dump complete
 --
 
+CREATE TABLE public.admins (
+    id SERIAL PRIMARY KEY,                               -- Unique admin ID (auto-increment)
+    username VARCHAR(100) UNIQUE NOT NULL,               -- Admin login username (must be unique)
+    password VARCHAR(255) NOT NULL,                      -- Login password (plain or hashed)
+    role VARCHAR(50) DEFAULT 'admin',                    -- Role type (e.g. admin, superadmin)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP       -- Account creation timestamp
+);
+
+ALTER TABLE public.admins OWNER TO postgres;
+
+COPY public.admins (id, username, password) FROM stdin;
+1	shawncui	123456
+\.
+
 \unrestrict zO1PGfCMmNsYdaxKgFmEDFwUKsofZikUlOwYpoJLgTw3tOQcxJNka1xiWdBYcwB
 
