@@ -11,10 +11,6 @@ export const adminLogin = async (req, res) => {
         }
         const admin = result.rows[0];
 
-        // if (admin.password !== password) {
-        //     return res.status(401).json({ error: "Invalid username or password." });
-        // }
-
         const token = jwt.sign(
             { id: admin.id, username: admin.username },
             process.env.JWT_SECRET || "default_secret",
