@@ -18,9 +18,10 @@ services:
       DB_PORT: 5432
       # Add any other required env variables for your API here
     volumes:
-      # This is the key for local development!
-      # It syncs the local code into the container for live reloading.
+#       This is the key for local development!
+#       It syncs the local code into the container for live reloading.
       - .:/app
+    command: npm run dev
     depends_on:
       - db_local
 
